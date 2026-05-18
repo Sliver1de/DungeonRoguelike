@@ -1,0 +1,50 @@
+# ========== Unity 相关文件 ==========
+# 1. Unity 自动生成的缓存和临时文件
+Library/
+Temp/
+Obj/
+Logs/
+MemoryCaptures/
+
+# 2. 不要上传 `.vs` 目录（Visual Studio 相关）
+.vs/
+
+# 3. 用户特定的 Unity 配置（本地缓存，不影响项目）
+UserSettings/
+
+# ========== Git 相关 ==========
+# 4. 忽略 `.git` 相关的日志和临时文件
+.git/
+*.orig
+*.swp
+*.swo
+*.swn
+
+# ========== 操作系统 & IDE 相关 ==========
+# 5. Mac 系统生成的垃圾文件
+.DS_Store
+._*
+
+# 6. Windows 系统生成的垃圾文件
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# 7. Visual Studio / JetBrains Rider / VS Code 相关
+*.csproj
+*.sln
+*.suo
+*.user
+*.unityproj
+*.tmp
+*.VC.db
+*.pidb
+*.booproj
+*.svd
+*.pdb
+.vscode/
+.idea/
+
+# ========== 其他 ==========
+# 8. 记录 Unity 崩溃的日志文件
+CrashReports/
