@@ -1,6 +1,6 @@
 # Dungeon Roguelike（地牢猎手：枪火重生）
 
-一个使用 Unity 开发的 2D Roguelike 动作游戏项目。
+使用Unity2022.3.43f1c1进行开发的 2D Roguelike 地牢冒险闯关游戏
 
 ## 项目状态
 
