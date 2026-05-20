@@ -1,10 +1,12 @@
 # ========== Unity 相关文件 ==========
 # 1. Unity 自动生成的缓存和临时文件
-Library/
-Temp/
-Obj/
-Logs/
-MemoryCaptures/
+/[Ll]ibrary/
+/[Tt]emp/
+/[Oo]bj/
+/[Bb]uild/
+/[Bb]uilds/
+/[Ll]ogs/
+/[Uu]ser[Ss]ettings/
 
 # 2. 不要上传 `.vs` 目录（Visual Studio 相关）
 .vs/
@@ -12,25 +14,27 @@ MemoryCaptures/
 # 3. 用户特定的 Unity 配置（本地缓存，不影响项目）
 UserSettings/
 
+# 4. Asset meta data should only be ignored when the corresponding asset is also ignored  只有当相应的资产也被忽略时，资产元数据才应被忽略。
+!/[Aa]ssets/**/*.meta
+
 # ========== Git 相关 ==========
-# 4. 忽略 `.git` 相关的日志和临时文件
-.git/
+# 5. 忽略 `.git` 相关的日志和临时文件
 *.orig
 *.swp
 *.swo
 *.swn
 
 # ========== 操作系统 & IDE 相关 ==========
-# 5. Mac 系统生成的垃圾文件
+# 6. Mac 系统生成的垃圾文件
 .DS_Store
 ._*
 
-# 6. Windows 系统生成的垃圾文件
+# 7. Windows 系统生成的垃圾文件
 Thumbs.db
 Desktop.ini
 $RECYCLE.BIN/
 
-# 7. Visual Studio / JetBrains Rider / VS Code 相关
+# 8. Visual Studio / JetBrains Rider / VS Code 相关
 *.csproj
 *.sln
 *.suo
@@ -46,5 +50,5 @@ $RECYCLE.BIN/
 .idea/
 
 # ========== 其他 ==========
-# 8. 记录 Unity 崩溃的日志文件
+# 9. 记录 Unity 崩溃的日志文件
 CrashReports/
