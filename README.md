@@ -6,12 +6,12 @@
 
 开发中。
 
-## 使用技术
+## 技术栈
 
-- Unity
-- C#
-- Universal Render Pipeline（URP）
-- TextMesh Pro
+- 委托、事件、观察者模式
+- Astar寻路算法
+- 对象池
+- FSM有限状态机
 
 ## 当前内容
 
