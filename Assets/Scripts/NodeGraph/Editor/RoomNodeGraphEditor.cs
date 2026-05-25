@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEditor;
 using UnityEditor.Callbacks;
 
+//编辑器创建相应的房间节点(入口、走廊、房间等)
 public class RoomNodeGraphEditor : EditorWindow
 {
     private GUIStyle roomNodeStyle;     //房间节点样式
@@ -17,20 +18,21 @@ public class RoomNodeGraphEditor : EditorWindow
     private RoomNodeSO currentRoomNode = null;
     private RoomNodeTypeListSO roomNodeTypeList;
 
-    //节点布局值 Node layout value
+    //节点布局值(节点大小)
     private const float nodeWidth = 160f;
     private const float nodeHeight = 75f;
     private const int nodePadding = 25;
     private const int nodeBorder = 12;
 
-    //连线值 connecting line values
+    //节点之间连线值
     private const float connectingLineWidth = 3f;
     private const float connectingLineArrowSize = 6f;
     
-    //Grid Spacing  网格间距
+    //网格间距
     private const float gridLarge = 100f;
     private const float gridSmall = 25f;
-
+    
+    //在unity编辑器 window中创建房间节点画布
     [MenuItem("Room Node Graph Editor",menuItem = "Window/Dungeon Editor/Room Node Graph Editor")]
     private static void OpenWindow()
     {
@@ -39,41 +41,40 @@ public class RoomNodeGraphEditor : EditorWindow
 
     private void OnEnable()
     {
-        //subscribe to the inspector selection changed event    订阅 "检查器选择已更改 "事件
+        //订阅 "检查器选择已更改 "事件
         Selection.selectionChanged += InspectorSelectionChanged;
         
-        //define node layout style 定义节点布局
+        //定义节点布局
         roomNodeStyle = new GUIStyle();
         roomNodeStyle.normal.background = EditorGUIUtility.Load("node1") as Texture2D;
         roomNodeStyle.normal.textColor = Color.white;
         roomNodeStyle.padding = new RectOffset(nodePadding, nodePadding, nodePadding, nodePadding);
         roomNodeStyle.border = new RectOffset(nodeBorder, nodeBorder, nodeBorder, nodeBorder);
         
-        //define selected node style 定义选中节点
+        //定义选中节点
         roomNodeSelectedStyle = new GUIStyle();
         roomNodeSelectedStyle.normal.background=EditorGUIUtility.Load("node1 on") as Texture2D;
         roomNodeSelectedStyle.normal.textColor=Color.white;
         roomNodeSelectedStyle.padding = new RectOffset(nodePadding, nodePadding, nodePadding, nodePadding);
         roomNodeSelectedStyle.border = new RectOffset(nodeBorder, nodeBorder, nodeBorder, nodeBorder);
         
-        //Loop Room node types
+        //加载节点类型列表
         roomNodeTypeList = GameResources.Instance.roomNodeTypeList;
     }
 
     private void OnDisable()
     {
-        //UnSubscribe from the inspector selection changed event
+        //取消订阅 "检查器选择已更改 "事件
         Selection.selectionChanged -= InspectorSelectionChanged;
     }
 
     /// <summary>
-    /// open the room graph editor window if a room node graph scriptable asset is double click in the inspector
-    /// 双击检查器中的房间节点图脚本资产，打开房间图编辑器窗口
+    /// 双击创建的SO Asset(打开房间地图，节点编辑器)，打开房间图编辑器窗口
     /// </summary>
     /// <param name="instanceID"></param>
     /// <param name="line"></param>
     /// <returns></returns>
-    [OnOpenAsset(0)]    //Need the namespace UnityEditor.Callbacks
+    [OnOpenAsset(0)]    //需要引用 UnityEditor.Callbacks
     public static bool OnDoubleClickAsset(int instanceID, int line)
     {
         RoomNodeGraphSO roomNodeGraph = EditorUtility.InstanceIDToObject(instanceID) as RoomNodeGraphSO;
@@ -104,24 +105,23 @@ public class RoomNodeGraphEditor : EditorWindow
         //GUILayout.EndArea();
         #endregion
 
-        //if a scriptable object of type RoomNodeGraphSO has been selected then process
         //如果选择了 RoomNodeGraphSO 类型的脚本对象，则处理
         if (currentRoomNodeGraph != null)
         {
-            //Draw Grid     绘制网格
+            //绘制网格
             DrawBackgroundGrid(gridSmall, 0.2f, Color.gray);
             DrawBackgroundGrid(gridLarge, 0.3f, Color.gray);
             
-            //Draw line if being dragged  被拖动时画线
+            //被拖动时画线
             DrawDraggedLine();
 
-            //Process Event
+            //过程事件
             ProcessEvents(Event.current);
 
-            //Draw Connections Between Room Nodes   绘制房间节点之间的连接
+            //绘制房间节点之间的连接
             DrawRoomConnections();
 
-            //Draw Room Nodes
+            //绘制房间节点
             DrawRoomNodes();
         }
 
@@ -132,7 +132,7 @@ public class RoomNodeGraphEditor : EditorWindow
     }
 
     /// <summary>
-    /// Draw a background grid for the room node graph editor   为房间节点图编辑器绘制背景网格
+    ///为房间节点图编辑器绘制背景网格
     /// </summary>
     /// <param name="gridSize"></param>
     /// <param name="gridOpacity"></param>
@@ -163,11 +163,14 @@ public class RoomNodeGraphEditor : EditorWindow
         Handles.color = Color.white;
     }
 
+    /// <summary>
+    /// 绘制拖曳线
+    /// </summary>
     private void DrawDraggedLine()
     {
         if (currentRoomNodeGraph.linePosition != Vector2.zero)
         {
-            //Draw line from to line position   从直线位置到直线位置画线
+            //从直线位置到直线位置画线
             //贝塞尔线
             Handles.DrawBezier(currentRoomNodeGraph.roomNodeToDrawLineFrom.rect.center, 
                 currentRoomNodeGraph.linePosition,
@@ -179,17 +182,15 @@ public class RoomNodeGraphEditor : EditorWindow
 
     private void ProcessEvents(Event currentEvent)
     {
-        //Reset graph drag  重置图形拖动
+        //重置图形拖动
         graphDrag = Vector2.zero;
         
-        //Get room node that mouse is over if it's null or not currtly being dragger
         //如果鼠标经过的房间节点为空或当前未被拖动，则获取该节点
         if (currentRoomNode == null || currentRoomNode.isLeftClickDragging == false)
         {
             currentRoomNode = ISMouseOverRoomNode(currentEvent);
         }
 
-        //if mouse isn't over a room node or we are currently dargging a line from the room node then process graph events
         //如果鼠标不在房间节点上，或者我们当前正在从房间节点上移开一条线，则处理图形事件
         if (currentRoomNode == null || currentRoomNodeGraph.roomNodeToDrawLineFrom != null)
         {
@@ -197,13 +198,12 @@ public class RoomNodeGraphEditor : EditorWindow
         }
         else
         {
-            //process room node events      处理房间节点事件
+            //处理房间节点事件
             currentRoomNode.ProcessEvents(currentEvent);
         }
     }
 
     /// <summary>
-    /// Click to see to mouse is over a room node - if so then return the room node else return null
     /// 点击查看鼠标是否停留在房间节点上 - 如果是，则返回房间节点，否则返回 null
     /// </summary>
     /// <param name="currentEvent"></param>
@@ -223,14 +223,14 @@ public class RoomNodeGraphEditor : EditorWindow
 
 
     /// <summary>
-    /// Process Room Node Graph Events 处理流程节点图
+    /// 处理流程节点图
     /// </summary>
     /// <param name="currentEvent"></param>
     private void ProcessRoomNodeGraphEvents(Event currentEvent)
     {
         switch (currentEvent.type)
         {
-            //Process Mouse Down Events     处理鼠标点击事件
+            //处理鼠标点击事件
             case EventType.MouseDown:
                 ProcessMouseDownEvent(currentEvent);
                 break;
@@ -246,19 +246,17 @@ public class RoomNodeGraphEditor : EditorWindow
     }
 
     /// <summary>
-    /// Process mouse down events on the room node graph (not over a node)
     /// 处理房间节点图上（而非节点上）的鼠标向下事件
     /// </summary>
     /// <param name="currentEvent"></param>
     private void ProcessMouseDownEvent(Event currentEvent)
     {
-        //Process right click mouse down on graph event(show context menu)
         //在图形事件上单击鼠标右键的过程（显示上下文菜单）
         if (currentEvent.button == 1)
         {
             ShowContextMenu(currentEvent.mousePosition);
         }
-        //Process left mouse down on graph event    在图形事件中处理鼠标左击
+        //在图形事件中处理鼠标左击
         else if (currentEvent.button == 0)
         {
             ClearLineDrag();
@@ -267,7 +265,7 @@ public class RoomNodeGraphEditor : EditorWindow
     }
 
     /// <summary>
-    /// Show the context menu   显示上下文菜单
+    /// 显示上下文菜单
     /// </summary>
     /// <param name="mousePosition"></param>
     private void ShowContextMenu(Vector2 mousePosition)
@@ -285,12 +283,11 @@ public class RoomNodeGraphEditor : EditorWindow
     }
 
     /// <summary>
-    /// Create a room node at the mouse position    在鼠标位置创建房间节点
+    /// 在鼠标位置创建房间节点
     /// </summary>
     /// <param name="mousePositionObject"></param>
     private void CreateRoomNode(object mousePositionObject)
     {
-        //if current node graph empty then add entrance room node first
         //如果当前节点图为空，则先添加入口房间节点
         if (currentRoomNodeGraph.roomNodeList.Count == 0)
         {
@@ -304,82 +301,81 @@ public class RoomNodeGraphEditor : EditorWindow
     {
         Vector2 mousePosition = (Vector2)mousePositionObject;
 
-        //create room node scriptable object asset  创建房间节点脚本对象资产
+        //创建房间节点脚本对象资产
         RoomNodeSO roomNode = ScriptableObject.CreateInstance<RoomNodeSO>();
 
-        //add room node to current room node graph room node list   将房间节点添加到当前房间节点图的房间节点列表中
+        //将房间节点添加到当前房间节点图的房间节点列表中
         currentRoomNodeGraph.roomNodeList.Add(roomNode);
 
-        //set room node values      设置房间节点值
+        //设置房间节点值
         roomNode.Initialise(new Rect(mousePosition, new Vector2(nodeWidth, nodeHeight)), currentRoomNodeGraph, roomNodeType);
 
-        //add room node to room node graph scriptable object asset database
         //将房间节点添加到房间节点图脚本对象资产数据库中
         AssetDatabase.AddObjectToAsset(roomNode, currentRoomNodeGraph);
 
         AssetDatabase.SaveAssets();
 
-        //refresh graph node dictionary     刷新图节点字典
+        //刷新图节点字典
         currentRoomNodeGraph.OnValidate();
 
     }
 
     /// <summary>
-    /// Delete selected room nodes  删除选中节点
+    /// 删除选中节点
     /// 这里注意不能直接删除，会导致一系列问题 将要删除的节点先保存到队列中再删除
     /// </summary>
     private void DeleteSelectedRoomNodes()
     {
         Queue<RoomNodeSO> roomNodeDeleteQueue = new Queue<RoomNodeSO>();
         
-        //Loop through all nodes
+        //循环遍历所有节点
         foreach (RoomNodeSO roomNode in currentRoomNodeGraph.roomNodeList)
         {
             if (roomNode.isSelected && !roomNode.roomNodeType.isEntrance)
             {
                 roomNodeDeleteQueue.Enqueue(roomNode);
                 
-                //iterate through child room nodes ids  遍历子房间节点 id
+                //遍历子房间节点 id
                 foreach (string childRoomNodeID in roomNode.childRoomNodeIDList)
                 {
-                    //Retrieve child room node  检索子房间节点
+                    //检索子房间节点
                     RoomNodeSO childRoomNode = currentRoomNodeGraph.GetRoomNode(childRoomNodeID);
 
                     if (childRoomNode != null)
                     {
-                        //Remove parentID from child room node
+                        //移除子节点上的ParentID
                         childRoomNode.RemoveParentRoomNodeIDFromRoomNode(roomNode.id);
                     }
                 }
                 
-                //Iterate through parent room node ids
+                //遍历父房间节点ID
                 foreach (string parentRoomNodeID in roomNode.parentRoomNodeIDList)
                 {
-                    //Retrieve parent node
+                    //检索父节点
                     RoomNodeSO parentRoomNode = currentRoomNodeGraph.GetRoomNode(parentRoomNodeID);
 
                     if (parentRoomNodeID != null)
                     {
-                        //Remove childID from parent node
+                        //移除父节点上的childID
                         parentRoomNode.RemoveChildRoomNodeIDFromRoomNode(roomNode.id);
                     }
                 }
             }
         }
         
-        //Delete queued room nodes  删除队列中的房间节点
+        //删除队列中的房间节点
         while (roomNodeDeleteQueue.Count > 0)
         {
-           //Get room node from queue      从队列中获取房间节点
+           //从队列中获取房间节点
            RoomNodeSO roomNodeToDelete = roomNodeDeleteQueue.Dequeue();
            
-           //Remove node from dictionary    从字典中移除节点
+           //从字典中移除节点
            currentRoomNodeGraph.roomNodeDictionary.Remove(roomNodeToDelete.id);
            
-           //Remove node from list      从列表中移除节点
+           //从列表中移除节点
            currentRoomNodeGraph.roomNodeList.Remove(roomNodeToDelete);
            
-           //Remove node from Asset database    从资产数据库中删除节点
+           //从资产数据库中删除节点
            DestroyImmediate(roomNodeToDelete,true);
            
            //Save asset database
@@ -388,39 +384,39 @@ public class RoomNodeGraphEditor : EditorWindow
     }
 
     /// <summary>
-    /// Delete the links between the selected room nodes    删除所选房间节点之间的链接
+    /// 删除所选房间节点之间的链接
     /// </summary>
     private void DeleteSelectedRoomNodeLinks()
     {
-        //Iterate through all room nodes    遍历所有房间节点
+        //遍历所有房间节点
         foreach (RoomNodeSO roomNode in currentRoomNodeGraph.roomNodeList)
         {
             if (roomNode.isSelected && roomNode.childRoomNodeIDList.Count > 0)
             {
                 for (int i = roomNode.childRoomNodeIDList.Count - 1; i >= 0; i--)
                 {
-                    //Get child room node   获取子房间节点
+                    //获取子房间节点
                     RoomNodeSO childRoomNode = currentRoomNodeGraph.GetRoomNode(roomNode.childRoomNodeIDList[i]);
                     
-                    //if the child room node is selected    如果选择了子房间节点
+                    //如果选择了子房间节点
                     if (childRoomNode != null && childRoomNode.isSelected)
                     {
-                        //Remove childID from parent room node  从父房间节点移除子 ID
+                        //从父房间节点移除子 ID
                         roomNode.RemoveChildRoomNodeIDFromRoomNode(childRoomNode.id);
                         
-                        //Remove parentID from child room node 从子房间节点移除父 ID
+                        //从子房间节点移除父 ID
                         childRoomNode.RemoveParentRoomNodeIDFromRoomNode(roomNode.id);
                     }
                 }
             }
         }
-        //Clear all selected room nodes     清除所有选定的房间节点
+        //清除所有选定的房间节点
         ClearAllSelectedRoomNodes();
     }
     
     
 
-    //Clear selection from all room nodes   清除所有选中的房间节点
+    //清除所有选中的房间节点
     private void ClearAllSelectedRoomNodes()
     {
         foreach (RoomNodeSO roomNode in currentRoomNodeGraph.roomNodeList)
@@ -444,20 +440,18 @@ public class RoomNodeGraphEditor : EditorWindow
 
     private void ProcessMouseUpEvent(Event currentEvent)
     {
-        //if releasing the right mouse button and currently dragging a line
         //如果松开鼠标右键并正在拖动一条直线
         if (currentEvent.button == 1 && currentRoomNodeGraph.roomNodeToDrawLineFrom != null)
         {
-            //Check if over a room  检查是否是房间节点
+            //检查是否是房间节点
             RoomNodeSO roomNode = ISMouseOverRoomNode(currentEvent);
 
             if (roomNode != null)
             {
-                //if so set it as a child of the parent room node if it can be added
                 //如果可以添加，则将其设置为父房间节点的子节点
                 if (currentRoomNodeGraph.roomNodeToDrawLineFrom.AddChildRoomNodeIDRoomNode(roomNode.id))
                 {
-                    //set parent ID in child room node  在房间子节点中设置父节点 ID
+                    //在房间子节点中设置父节点 ID
                     roomNode.AddParentRoomNodeIDToRoomNode(currentRoomNodeGraph.roomNodeToDrawLineFrom.id);
                 }
             }
@@ -467,17 +461,17 @@ public class RoomNodeGraphEditor : EditorWindow
     }
 
     /// <summary>
-    /// Process mouse drag event
+    /// 鼠标拖曳事件
     /// </summary>
     /// <param name="currentEvent"></param>
     private void ProcessMouseDragEvent(Event currentEvent)
     {
-        //process right click drag event - draw line        处理右键拖动事件 - 画线
+        //处理右键拖动事件 - 画线
         if (currentEvent.button == 1)
         {
             ProcessRightMouseDragEvent(currentEvent);
         }
-        //process left click drag event - drag node graph       处理左键拖动事件 - 拖动节点图
+        //处理左键拖动事件 - 拖动节点图
         else if (currentEvent.button == 0)
         {
             ProcessLeftMouseDragEvent(currentEvent.delta);
@@ -485,7 +479,7 @@ public class RoomNodeGraphEditor : EditorWindow
     }
 
     /// <summary>
-    /// process right mouse drag event - draw line      处理鼠标右拖事件 - 画线
+    /// 处理鼠标右拖事件 - 画线
     /// </summary>
     /// <param name="currentEvent"></param>
     private void ProcessRightMouseDragEvent(Event currentEvent)
@@ -498,7 +492,7 @@ public class RoomNodeGraphEditor : EditorWindow
     }
 
     /// <summary>
-    /// Process left mouse drag event - drag room node graph    处理鼠标左键拖动事件 - 拖动房间节点图
+    /// 处理鼠标左键拖动事件 - 拖动房间节点图
     /// </summary>
     /// <param name="dragDelta"></param>
     private void ProcessLeftMouseDragEvent(Vector2 dragDelta)
@@ -513,7 +507,7 @@ public class RoomNodeGraphEditor : EditorWindow
     }
 
     /// <summary>
-    /// Drag connecting line from room node 从房间节点拖动连接线
+    /// 从房间节点拖动连接线
     /// </summary>
     /// <param name="delta"></param>
     public void DragConnectingLine(Vector2 delta)
@@ -530,15 +524,15 @@ public class RoomNodeGraphEditor : EditorWindow
 
     private void DrawRoomConnections()
     {
-        //Loop through all room nodes   遍历所有房间节点
+        //遍历所有房间节点
         foreach (RoomNodeSO roomNode in currentRoomNodeGraph.roomNodeList)
         {
             if (roomNode.childRoomNodeIDList.Count > 0)
             {
-                //Loop through child room nodes  遍历所有孩子节点
+                //遍历所有孩子节点
                 foreach (string childRoomNodeID in roomNode.childRoomNodeIDList)
                 {
-                    //get child room node from dictionary   从字典中获取孩子节点
+                    //从字典中获取孩子节点
                     if (currentRoomNodeGraph.roomNodeDictionary.ContainsKey(childRoomNodeID))
                     {
                         DrawConnectionLine(roomNode, currentRoomNodeGraph.roomNodeDictionary[childRoomNodeID]);
@@ -551,29 +545,27 @@ public class RoomNodeGraphEditor : EditorWindow
     }
 
     /// <summary>
-    /// Draw connection line between the parent room node and child room
     /// 在父房间节点和子房间节点之间绘制连接线
     /// </summary>
     /// <param name="parentRoomNode"></param>
     /// <param name="childRoomNode"></param>
     private void DrawConnectionLine(RoomNodeSO parentRoomNode, RoomNodeSO childRoomNode)
     {
-        //get line start and end position
+        //获取线段起点和终点
         Vector2 startPosition = parentRoomNode.rect.center;
         Vector2 endPosition = childRoomNode.rect.center;
 
-        //calculate midway point
+        //计算中点
         Vector2 midPosition = (endPosition + startPosition) / 2f;
 
-        //vector from start to end position of line
+        //计算距离
         Vector2 direction = endPosition - startPosition;
 
-        //calculate normalised perpendicular positions from the mid point
         //计算从中点开始的归一化垂直位置
         Vector2 arrowTailPoint1 = midPosition - new Vector2(-direction.y, direction.x).normalized * connectingLineArrowSize;
         Vector2 arrowTailPoint2 = midPosition + new Vector2(-direction.y, direction.x).normalized * connectingLineArrowSize;
 
-        //calculate mid point offset position for arrow head    计算箭头中点偏移位置
+        //计算箭头中点偏移位置
         Vector2 arrowHeadPoint = midPosition + direction.normalized * connectingLineArrowSize;
 
         //Draw Arrow
@@ -587,11 +579,11 @@ public class RoomNodeGraphEditor : EditorWindow
     }
 
     /// <summary>
-    /// Draw room nodes int the graph window    在图形窗口中绘制房间节点
+    /// 在图形窗口中绘制房间节点
     /// </summary>
     private void DrawRoomNodes()
     {
-        //Loop through all room nodes and draw them     循环浏览所有房间节点并绘制它们
+        //循环浏览所有房间节点并绘制它们
         foreach (RoomNodeSO roomNode in currentRoomNodeGraph.roomNodeList)
         {
             if (roomNode.isSelected)
@@ -608,7 +600,7 @@ public class RoomNodeGraphEditor : EditorWindow
     }
 
     /// <summary>
-    /// Selection changed in the inspector  检查器中的选择已更改
+    /// 检查器中的选择已更改
     /// </summary>
     private void InspectorSelectionChanged()
     {
