@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+//房间节点类型列表SO
 [CreateAssetMenu(fileName = "RoomNodeTypeListSO",menuName = "Scriptable Objects/Dungeon/Room Node Type List")]
 public class RoomNodeTypeListSO : ScriptableObject
 {
