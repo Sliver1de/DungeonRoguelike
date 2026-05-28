@@ -180,6 +180,7 @@ public class RoomNodeGraphEditor : EditorWindow
         }
     }
 
+    //处理事件
     private void ProcessEvents(Event currentEvent)
     {
         //重置图形拖动
@@ -522,6 +523,7 @@ public class RoomNodeGraphEditor : EditorWindow
         GUI.changed = true;
     }
 
+    //绘制房间节点之间的连接
     private void DrawRoomConnections()
     {
         //遍历所有房间节点
