@@ -21,18 +21,16 @@ public static class Settings
     
     #region Room Settings
 
-    //Max number of child corridors leading from a room. - maximum should be 3 although this is not recommended since it
-    //can cause the dungeon building to fail since the rooms are more likely to not fit together
     //从一个房间通向其他房间的子走廊的最大数量。 - 最大应为 3 个，但不建议这样做，因为这可能导致地牢建造失败，因为房间更有可能无法组合在一起
     public const int maxChildCorridors = 3;
-    //Time to fade in the room  进入房间的淡入时间
+    //进入房间的淡入时间
     public const float fadeInTime = 0.5f;
     public const float doorUnlockDelay = 1f;
 
     #endregion
     
     #region Animator Parameters
-    //Animator parameters - player
+    //玩家动画参数
     public static int aimUp = Animator.StringToHash("aimUp");
     public static int aimDown = Animator.StringToHash("aimDown");
     public static int aimLeft = Animator.StringToHash("aimLeft");
@@ -53,13 +51,13 @@ public static class Settings
 
     public static float baseSpeedForPlayerAnimations = 8f;
     
-    //Animator parameters - Enemy
+    //敌人动画参数
     public static float baseSpeedForEnemyAnimations = 3f;
 
-    //Animator parameters - Door
+    //门动画参数
     public static int open = Animator.StringToHash("open");
     
-    //Animator parameters - DamageableDecoration
+    //可破坏物品动画参数
     public static int destroy = Animator.StringToHash("destroy");
     public static String stateDestroyed = "Destroyed";
 
@@ -74,14 +72,12 @@ public static class Settings
 
     #region AUDIO
 
-    public const float musicFadeOutTime = 0.5f;     //Default Music Fade Out Transition 默认音乐淡出过渡
-    public const float musicFadeInTime = 0.5f;      //Default Music Fade in Transition  默认音乐淡入过渡
+    public const float musicFadeOutTime = 0.5f;     //默认音乐淡出过渡
+    public const float musicFadeInTime = 0.5f;      //默认音乐淡入过渡
 
     #endregion
 
     #region FIRING CONTROL
-    //if the target distance is less than this then the aim angle will be used (calculated from player),
-    //else the weapon aim angle will be used (calculate from the weapon shoot position).
     //如果目标距离小于此值，则将使用瞄准角度（从玩家位置计算）；否则，将使用武器瞄准角度（从武器射击位置计算）
     public const float useAimAngleDistance = 3.5f;
 
