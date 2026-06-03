@@ -2,6 +2,7 @@
 using UnityEditor;
 using UnityEngine;
 
+//配置房间数据
 [CreateAssetMenu(fileName = "Room_", menuName = "Scriptable Objects/Dungeon/Room")]
 public class RoomTemplateSO : ScriptableObject
 {
@@ -22,7 +23,6 @@ public class RoomTemplateSO : ScriptableObject
 
     public GameObject prefab;
 
-    // this is used to regenerate the guid if the so is copied and the prefab is changed
     //用于在复制 so 和更改预置时重新生成引导符
     [HideInInspector] public GameObject previousPrefab;
 
@@ -138,7 +138,7 @@ public class RoomTemplateSO : ScriptableObject
     public List<RoomEnemySpawnParameters> roomEnemySpawnParametersList;
 
     /// <summary>
-    /// Returns the list of Entrances for the room template
+    /// 返回房间模板的入口列表
     /// </summary>
     public List<Doorway> GetDoorwayList()
     {
@@ -149,10 +149,10 @@ public class RoomTemplateSO : ScriptableObject
 
 #if UNITY_EDITOR
 
-    // Validate SO fields   验证 SO 文件
+    // 验证 SO 文件
     private void OnValidate()
     {
-        // Set unique GUID if empty or the prefab changes   如果预制件为空或发生变化，则设置唯一的 GUID
+        // 如果预制件为空或发生变化，则设置唯一的 GUID
         if (guid == "" || previousPrefab != prefab)
         {
             guid = GUID.Generate().ToString();
@@ -167,7 +167,7 @@ public class RoomTemplateSO : ScriptableObject
 
         HelperUtilities.ValidateCheckEnumerableValues(this, nameof(doorwayList), doorwayList);
         
-        //check enemies and room spawn parameters for levels    检查敌人和房间的生成参数，针对不同的关卡
+        //检查敌人和房间的生成参数，针对不同的关卡
         if (enemiesByLevelList.Count > 0 || roomEnemySpawnParametersList.Count > 0)
         {
             HelperUtilities.ValidateCheckEnumerableValues(this, nameof(enemiesByLevelList), enemiesByLevelList);
@@ -196,7 +196,7 @@ public class RoomTemplateSO : ScriptableObject
 
                 bool isEnemyTypesListForDungeonLevel = false;
                 
-                //Validate enemy types list
+                //验证敌人类型列表
                 foreach (SpawnableObjectsByLevel<EnemyDetailsSO> dungeonObjectBLevel in enemiesByLevelList)
                 {
                     if (dungeonObjectBLevel.dungeonLevel == roomEnemySpawnParameters.dungeonLevel &&
@@ -228,7 +228,7 @@ public class RoomTemplateSO : ScriptableObject
         }
 
 
-        // Check spawn positions populated  检查生成位置是否已填充
+        //检查生成位置是否已填充
         HelperUtilities.ValidateCheckEnumerableValues(this, nameof(spawnPositionArray), spawnPositionArray);
     }
 
