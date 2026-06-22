@@ -134,19 +134,19 @@ public class Ammo : MonoBehaviour, IFireable
 
         this.ammoDetails = ammoDetails;
         
-        //Initialise isColliding
+        //初始化isColliding
         isColliding = false;
         
-        //Set fire Direction
+        //设置开火方向
         SetFireDirection(ammoDetails, aimAngle, weaponAimAngle, weaponAimDirectionVector);
         
-        //Set ammo sprite
+        //设置子弹Sprite
         spriteRenderer.sprite = ammoDetails.ammoSprite;
         
-        //set initial ammo material depending on whether there is an ammo charge period 根据是否有弹药充能周期设置初始弹药材质
+        //根据是否有弹药充能周期设置初始弹药材质
         if (ammoDetails.ammoChargeTime > 0f)
         {
-            //Set ammo charge timer
+            //设置弹药充能计时器
             ammoChargeTimer = ammoDetails.ammoChargeTime;
             SetAmmoMaterial(ammoDetails.ammoChargeMaterial);
             isAmmoMaterialSet = false;
@@ -158,16 +158,16 @@ public class Ammo : MonoBehaviour, IFireable
             isAmmoMaterialSet = true;
         }
         
-        //Set ammo range
+        //设置子弹范围
         ammoRange = ammoDetails.ammoRange;
         
-        //Set ammoSpeed
+        //设置子弹速度
         this.ammoSpeed = ammoSpeed;
         
-        //Override ammo movement
+        //重写弹药移动逻辑
         this.overrideAmmoMovement = overrideAmmoMovement;
         
-        //Active ammo gameobject
+        //激活子弹游戏对象
         gameObject.SetActive(true);
 
         #endregion
