@@ -53,7 +53,7 @@ public class SoundEffectManager : SingletonMonobehaviour<SoundEffectManager>
     }
 
     /// <summary>
-    /// 提高音乐音量
+    /// 提高音量
     /// </summary>
     public void IncreaSoundsVolume()
     {
@@ -67,7 +67,7 @@ public class SoundEffectManager : SingletonMonobehaviour<SoundEffectManager>
     }
 
     /// <summary>
-    /// 降低音乐音量
+    /// 降低音量
     /// </summary>
     public void DecreaseSoundsVolume()
     {
