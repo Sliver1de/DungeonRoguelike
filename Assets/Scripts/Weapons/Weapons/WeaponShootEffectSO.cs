@@ -1,0 +1,144 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+[CreateAssetMenu(fileName = "WeaponShootEffect_",menuName = "Scriptable Objects/Weapons/Weapon Shoot  Effect")]
+public class WeaponShootEffectSO : ScriptableObject
+{
+    #region Header WEAPON SHOOT EFFECT DETAILS
+
+    [Space(10)]
+    [Header("WEAPON SHOOT EFFECT DETAILS")]
+
+    #endregion
+
+    #region Tooltip
+
+    //射击效果的颜色渐变。这个渐变展示了粒子在其生命周期中的颜色变化 —— 从左到右
+    [Tooltip(
+        "The color gradient for the shoot effect. This gradient show the color of particles during their lifetime - from left to right")]
+
+    #endregion
+
+    public Gradient colorGradient;
+
+    #region Tooltip
+    //粒子系统发射粒子的持续时间
+    [Tooltip("The length of time the particle system is emitting particles")]
+
+    #endregion
+
+    public float duration = 0.5f;
+    
+    #region Tooltip
+    //粒子效果的初始粒子大小
+    [Tooltip("The start particle size for the particle effect")]
+
+    #endregion
+
+    public float startParticleSize = 0.25f;
+
+    #region Tooltip
+
+    //粒子效果的初始速度大小
+    [Tooltip("The start particle speed for the particle effect")]
+
+    #endregion
+
+    public float startParticleSpeed = 3f;
+
+    #region Tooltip
+    //粒子效果寿命
+    [Tooltip("The particle lifetime for the particle effect")]
+
+    #endregion
+
+    public float startLifetime = 0.5f;
+    
+    #region Tooltip
+    //要发射的最大粒子数量
+    [Tooltip("The maximum number of particles to be emitted")]
+
+    #endregion
+
+    public int maxParticleNumber = 100;
+    
+    #region Tooltip
+
+    //每秒发射的粒子数量。如果为零，则只会是爆发时发射的粒子数量
+    [Tooltip("The number of particles emitted per second. If zero it will just be the burst number")]
+
+    #endregion
+
+    public int emissionRate = 100;
+    
+    #region Tooltip
+    //粒子效果爆发中应发射的粒子数量
+    [Tooltip("How many particles should be emitted in the particle effect burst")]
+
+    #endregion
+
+    public int burstParticleNumber = 20;
+    
+    #region Tooltip
+    //粒子的重力 —— 一个小的负值会让粒子向上漂浮
+    [Tooltip("The gravity on the particles - a small negative number will make them float up")]
+
+    #endregion
+
+    public float effectGravity = -0.01f;
+    
+    #region Tooltip
+    //粒子效果的精灵。如果没有指定，则会使用默认的粒子精灵
+    [Tooltip("The sprite for the particle effect. If none is specified then the default particle sprite will be used")]
+
+    #endregion
+
+    public Sprite sprite;
+    
+    #region Tooltip
+    //粒子在其生命周期内的最小速度。将在最小值和最大值之间生成一个随机值
+    [Tooltip(
+        "The min velocity for the particle over its lifetime. A random value between min and max will be generated")]
+
+    #endregion
+
+    public Vector3 velocityOverLifetimeMin;
+    
+    #region Tooltip
+    //粒子在其生命周期内的最大速度。将在最小值和最大值之间生成一个随机值
+    [Tooltip(
+        "The max velocity for the particle over its lifetime. A random value between min and max will be generated")]
+
+    #endregion
+
+    public Vector3 velocityOverLifetimeMax;
+
+    #region Tooltip
+    //weaponShootEffectPrefab 包含射击效果的粒子系统 —— 并由 weaponShootEffectSO 配置
+    [Tooltip(
+        "weaponShootEffectPrefab contains the particle system for the shoot effect - and is configured by the weaponShootEffectSO")]
+
+    #endregion
+
+    public GameObject weaponShootEffectPrefab;
+
+    #region Validation
+
+#if UNITY_EDITOR
+    private void OnValidate()
+    {
+        HelperUtilities.ValidateCheckPositiveValue(this, nameof(duration), duration, false);
+        HelperUtilities.ValidateCheckPositiveValue(this, nameof(startParticleSize), startParticleSize, false);
+        HelperUtilities.ValidateCheckPositiveValue(this, nameof(startParticleSpeed), startParticleSpeed, false);
+        HelperUtilities.ValidateCheckPositiveValue(this, nameof(startLifetime), startLifetime, false);
+        HelperUtilities.ValidateCheckPositiveValue(this, nameof(maxParticleNumber), maxParticleNumber, false);
+        HelperUtilities.ValidateCheckPositiveValue(this,nameof(emissionRate), emissionRate, true);
+        HelperUtilities.ValidateCheckPositiveValue(this,nameof(burstParticleNumber), burstParticleNumber, true);
+        HelperUtilities.ValidateCheckNullValue(this, nameof(weaponShootEffectPrefab), weaponShootEffectPrefab);
+    }
+#endif
+
+    #endregion
+}
